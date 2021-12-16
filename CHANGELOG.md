@@ -4,6 +4,9 @@ All notable changes to `laravel-schema-org-builder` will be documented in this f
 ## 1.1.0 - 202X-XX-XX
 
 - Removed unnecessary files
+- Schema builder code
+- Config file
+- composer.json 
 
 ## 1.0.0 - 202X-XX-XX
 
