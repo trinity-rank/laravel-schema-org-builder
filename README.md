@@ -15,7 +15,7 @@ composer require trinityrank/laravel-schema-org-builder
 
 ## Usage
 
-Use `App\Http\Controllers\SchemaOrgController`. For ease of use, in each class you should initialize it inside `__construct()`:
+Use `Trinityrank\LaravelSchemaOrgBuilder\SchemaOrgBuilder`. For ease of use, in each class you should initialize it inside `__construct()`:
 
 ```php
 public function __construct() 
