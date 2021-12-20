@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to `laravel-schema-org-builder` will be documented in this file.
+## 2.1.0 - 202X-XX-XX
+
+- Bug fixes
+- Composer requirements updated
+
 ## 1.1.0 - 202X-XX-XX
 
 - Removed unnecessary files

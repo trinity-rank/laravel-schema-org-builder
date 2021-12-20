@@ -18,19 +18,12 @@
     ],
     "require": {
         "php": "^8.0",
-        "spatie/laravel-package-tools": "^1.9.2",
         "spatie/schema-org": "^3.8"
-    },
-    "require-dev": {
-        "spatie/laravel-ray": "^1.14"
     },
     "autoload": {
         "psr-4": {
             "Trinityrank\\LaravelSchemaOrgBuilder\\": "src"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "config": {
         "sort-packages": true

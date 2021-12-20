@@ -20,7 +20,7 @@ Use `Trinityrank\LaravelSchemaOrgBuilder\SchemaOrgBuilder`. For ease of use, in 
 ```php
 public function __construct() 
 {
-    $this->schema_controller = new SchemaOrgController();
+    $this->schema_builder = new SchemaOrgBuilder();
 }
 ```
 
@@ -46,6 +46,22 @@ Example for '$node_properties':
     'reviews-archive' => ['Organization', 'WebSite', 'CollectionPage'],
     'money-page-category' => ['Organization', 'WebSite', 'CollectionPage'],
 ]
+```
+
+Some of the data is being retrieved from config files.
+
+From `main.php`:
+```
+- main.seo.home.meta_description
+- main.mail_address
+```
+From package's config file `schema-org-builder.php`, that you should publish using `php artisan vendor:publish --tag="schema-org-builder"`:
+```
+- schema-org-builder.general.logo
+- schema-org-builder.general.name
+- schema-org-builder.sameAs
+- schema-org-builder.slogan
+- schema-org-builder.general.inLanguage
 ```
 ## Changelog
 

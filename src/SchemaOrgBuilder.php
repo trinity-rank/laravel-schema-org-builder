@@ -22,14 +22,14 @@ class SchemaOrgBuilder
         $graph->organization()
             ->identifier(url('/').'#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
-            ->image(asset(config('schema.general.logo')))
+            ->image(asset(config('schema-org-builder.general.logo')))
             ->foundingDate((new DateTime('2019-07-15'))->format('Y-m-d'))
-            ->legalName(config('schema.general.name'))
-            ->name(config('schema.general.name'))
-            ->brand(config('schema.general.name'))
+            ->legalName(config('schema-org-builder.general.name'))
+            ->name(config('schema-org-builder.general.name'))
+            ->brand(config('schema-org-builder.general.name'))
             ->email(config('main.mail_address'))
-            ->sameAs(config('schema.sameAs'))
-            ->slogan(config('schema.slogan'))
+            ->sameAs(config('schema-org-builder.sameAs'))
+            ->slogan(config('schema-org-builder.slogan'))
             ->url(url('/'));
     }
 
@@ -38,8 +38,8 @@ class SchemaOrgBuilder
             ->identifier(url('/').'#/schema/website/1')
             ->copyrightHolder($graph->organization()->referenced()->toArray())
             ->description(config('main.seo.home.meta_description'))
-            ->inLanguage(config('schema.general.inLanguage'))
-            ->name(config('schema.general.name'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->name(config('schema-org-builder.general.name'))
             ->publisher($graph->organization()->referenced()->toArray())
             ->url(url('/'));
     }
@@ -53,7 +53,7 @@ class SchemaOrgBuilder
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
-            ->inLanguage(config('schema.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
             ->potentialAction(Schema::readAction()->target(url()->current()))
@@ -81,7 +81,7 @@ class SchemaOrgBuilder
             ->identifier($graph->webPage()['url'].'#/schema/article/'.$entity['id'])
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
-            ->inLanguage(config('schema.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->isPartOf($graph->webPage()->referenced()->toArray())
             ->mainEntityOfPage($graph->webPage()->referenced()->toArray())
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
@@ -105,7 +105,7 @@ class SchemaOrgBuilder
         $strenghts = $weaknesses = [];
 
         foreach($entity->decorators as $decorator) {
-            if(!in_array($decorator['layout'], config('schema.review.relevant_decorators'))) continue;
+            if(!in_array($decorator['layout'], config('schema-org-builder.review.relevant_decorators'))) continue;
             if(!empty($decorator['data']['elements'][0]['rating'])) {
                 $review_rating = $decorator['data']['elements'][0]['rating'];
             }
@@ -217,7 +217,7 @@ class SchemaOrgBuilder
             ->about($graph->organization()->referenced()->toArray())
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
-            ->inLanguage(config('schema.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
             ->potentialAction(Schema::readAction()->target(url()->current()));
