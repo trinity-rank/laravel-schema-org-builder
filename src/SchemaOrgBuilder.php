@@ -19,10 +19,11 @@ class SchemaOrgBuilder
     }
 
     private function getOrganization(Graph $graph, $entity, $config = []) {
+        $logo = Schema::imageObject()->identifier(url('/').'#/schema/image/organization_logo_'.$entity['id'])->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
             ->identifier(url('/').'#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
-            ->image(asset(config('schema-org-builder.general.logo')))
+            ->logo($logo)
             ->foundingDate((new DateTime('2019-07-15'))->format('Y-m-d'))
             ->legalName(config('schema-org-builder.general.name'))
             ->name(config('schema-org-builder.general.name'))
@@ -129,15 +130,29 @@ class SchemaOrgBuilder
             }
         }
 
-        $graph->review()
+        $review = Schema::review()
             ->identifier(url('/').'#/schema/review/'.$entity['id'])
-            ->name($entity['title'])
-            ->reviewRating($review_rating)
+            ->name($entity['name'])
+            ->headline($entity['title'])
+            ->reviewRating(Schema::rating()->ratingValue($review_rating)) 
             ->reviewBody($entity['short_description'])
             ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
-            ->negativeNotes(Schema::itemList()->itemListElement($weaknesses));
+            ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
+            ->author(($graph->person()->referenced()->toArray()));
 
-        $graph->webPage()->review($graph->review()->referenced()->toArray());
+        // Product
+        $graph->product()
+            ->identifier(url('/').'#/schema/product/'.$entity['id'])
+            ->name(str_replace(' Review', '', $entity['name']))
+            ->review($review);
+        $product_image = collect($entity['media'])->first(function ($value) {
+            return str_contains($value['collection_name'], 'logo_');
+        });
+        if(!empty($product_image)) {
+            $graph->product()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
+        }
+
+        $graph->webPage()->product($graph->product()->referenced()->toArray());
     }
 
     private function getBreadcrumbs(Graph $graph, $entity, $config = []) {
