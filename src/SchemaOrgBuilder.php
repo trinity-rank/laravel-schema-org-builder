@@ -19,7 +19,7 @@ class SchemaOrgBuilder
     }
 
     private function getOrganization(Graph $graph, $entity, $config = []) {
-        $logo = Schema::imageObject()->identifier(url('/').'#/schema/image/organization_logo_'.$entity['id'])->url(asset(config('schema-org-builder.general.logo')));
+        $logo = Schema::imageObject()->identifier(url('/').'#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
             ->identifier(url('/').'#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
