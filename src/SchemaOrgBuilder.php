@@ -109,6 +109,18 @@ class SchemaOrgBuilder
             if(!in_array($decorator['layout'], config('schema-org-builder.review.relevant_decorators'))) continue;
             if(!empty($decorator['data']['elements'][0]['rating'])) {
                 $review_rating = $decorator['data']['elements'][0]['rating'];
+            } else if(!empty($decorator['data']['elements'][0]['intro_bonus_price'])) {
+                $review_rating = match (str_replace(' ', '', $decorator['data']['elements'][0]['intro_bonus_price'])) {
+                    'A+', 'A' => '5',
+                    'A-' => '4.5',
+                    'B+', 'B' => '4',
+                    'B-' => '3.5',
+                    'C+', 'C' => '3',
+                    'C-' => '2.5',
+                    'D+', 'D' => '2',
+                    'F' => 1,
+                    default => null
+                };                
             }
             if(!empty($decorator['data']['elements'][0]['strenghts'])) {
                 $position = 1;
