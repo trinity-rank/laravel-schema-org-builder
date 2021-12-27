@@ -5,6 +5,9 @@ All notable changes to `laravel-schema-org-builder` will be documented in this f
 ## 2.2.1 - 2021-12-21
 
 - Transforming letters to numbers for ratingValue property
+## 2.2.1 - 2021-12-21
+
+- Fix
 ## 2.2.0 - 2021-12-21
 
 - Product node added
