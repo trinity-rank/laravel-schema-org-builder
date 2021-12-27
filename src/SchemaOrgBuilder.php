@@ -57,8 +57,11 @@ class SchemaOrgBuilder
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
-            ->potentialAction(Schema::readAction()->target(url()->current()))
-            ->primaryImageOfPage($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
+            ->potentialAction(Schema::readAction()->target(url()->current()));
+
+        if(!empty($entity['media'][0]['collection_name'])) {
+            $graph->webPage()->primaryImageOfPage($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
+        }
 
         if(!empty($entity['user'])) {
             $this->getPerson($graph, $entity['user']);
@@ -157,9 +160,13 @@ class SchemaOrgBuilder
             ->identifier(url('/').'#/schema/product/'.$entity['id'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
-        $product_image = collect($entity['media'])->first(function ($value) {
-            return str_contains($value['collection_name'], 'logo_');
-        });
+        
+        $product_image = null;
+        if(!empty($entity['media'])) {
+            $product_image = collect($entity['media'])->first(function ($value) {
+                return str_contains($value['collection_name'], 'logo_');
+            });
+        }
         if(!empty($product_image)) {
             $graph->product()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
         }
