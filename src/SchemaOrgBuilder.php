@@ -57,7 +57,8 @@ class SchemaOrgBuilder
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
-            ->potentialAction(Schema::readAction()->target(url()->current()));
+            ->potentialAction(Schema::readAction()->target(url()->current()))
+            ->potentialAction(Schema::searchAction()->target(url('/').'view-all/?q={search_term_string}')->setProperty('query-input', 'required search_term_string'));
 
         if(!empty($entity['media'][0]['collection_name'])) {
             $graph->webPage()->primaryImageOfPage($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
