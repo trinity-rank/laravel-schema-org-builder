@@ -69,7 +69,6 @@ class SchemaOrgBuilder
             $graph->webPage()->author($graph->person()->referenced()->toArray());
         }
 
-        // @HERE
         if(!empty($config['seo']->meta_keywords)) {
             if(\is_array($config['seo']->meta_keywords))
             {
@@ -78,7 +77,6 @@ class SchemaOrgBuilder
                 $graph->webPage()->keywords($config['seo']->meta_keywords);
             }
         }
-        //
 
         $this->getBreadcrumbs($graph, $entity, $config);
         $this->getFAQPage($graph, $entity, $config);
