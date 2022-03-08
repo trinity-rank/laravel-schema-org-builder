@@ -18,7 +18,7 @@ composer require trinityrank/laravel-schema-org-builder
 Use `Trinityrank\LaravelSchemaOrgBuilder\SchemaOrgBuilder`. For ease of use, in each class you should initialize it inside `__construct()`:
 
 ```php
-public function __construct() 
+public function __construct()
 {
     $this->schema_builder = new SchemaOrgBuilder();
 }
@@ -55,6 +55,9 @@ From `main.php`:
 - main.seo.home.meta_description
 - main.mail_address
 ```
+
+Add `FOUNDING_DATE=` (FOUNDING_DATE=2019-11-29) in `.env`. If not added default value is `01.01.2020`
+
 From package's config file `schema-org-builder.php`, that you should publish using `php artisan vendor:publish --tag="schema-org-builder"`:
 ```
 - schema-org-builder.general.logo

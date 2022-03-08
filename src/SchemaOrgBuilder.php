@@ -14,7 +14,7 @@ class SchemaOrgBuilder
         foreach($node_properties as $property) {
             $this->{'get'.$property}($graph, $entity, $config);
         }
-        
+
         return $graph->toScript();
     }
 
@@ -24,7 +24,7 @@ class SchemaOrgBuilder
             ->identifier(url('/').'#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
             ->logo($logo)
-            ->foundingDate((new DateTime('2019-07-15'))->format('Y-m-d'))
+            ->foundingDate((new DateTime(env('FOUNDING_DATE','01.01.2020')))->format('Y-m-d'))
             ->legalName(config('schema-org-builder.general.name'))
             ->name(config('schema-org-builder.general.name'))
             ->brand(config('schema-org-builder.general.name'))
@@ -68,9 +68,17 @@ class SchemaOrgBuilder
             $this->getPerson($graph, $entity['user']);
             $graph->webPage()->author($graph->person()->referenced()->toArray());
         }
-        if(!empty($config['seo']->meta_keywords) && array_filter($config['seo']->meta_keywords)) {
-            $graph->webPage()->keywords($config['seo']->meta_keywords);
+
+        // @HERE
+        if(!empty($config['seo']->meta_keywords)) {
+            if(\is_array($config['seo']->meta_keywords))
+            {
+                $graph->webPage()->keywords(implode(",",$config['seo']->meta_keywords));
+            }else{
+                $graph->webPage()->keywords($config['seo']->meta_keywords);
+            }
         }
+        //
 
         $this->getBreadcrumbs($graph, $entity, $config);
         $this->getFAQPage($graph, $entity, $config);
@@ -81,7 +89,7 @@ class SchemaOrgBuilder
         if((class_exists('\App\Articles\Types\News')) && ($entity instanceof \App\Articles\Types\News)) {
             $type = 'newsArticle';
         }
-        
+
         $graph->{$type}()
             ->identifier($graph->webPage()['url'].'#/schema/article/'.$entity['id'])
             ->headline($entity['title'])
@@ -124,7 +132,7 @@ class SchemaOrgBuilder
                     'D+', 'D' => '2',
                     'F' => 1,
                     default => null
-                };                
+                };
             }
             if(!empty($decorator['data']['elements'][0]['strenghts'])) {
                 $position = 1;
@@ -150,7 +158,7 @@ class SchemaOrgBuilder
             ->identifier(url('/').'#/schema/review/'.$entity['id'])
             ->name($entity['name'])
             ->headline($entity['title'])
-            ->reviewRating(Schema::rating()->ratingValue($review_rating)) 
+            ->reviewRating(Schema::rating()->ratingValue($review_rating))
             ->reviewBody($entity['short_description'])
             ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
             ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
@@ -161,7 +169,7 @@ class SchemaOrgBuilder
             ->identifier(url('/').'#/schema/product/'.$entity['id'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
-        
+
         $product_image = null;
         if(!empty($entity['media'])) {
             $product_image = collect($entity['media'])->first(function ($value) {
@@ -179,7 +187,7 @@ class SchemaOrgBuilder
         if(!array_key_exists('breadcrumbs', $config)) return;
         $graph->breadcrumbList()
             ->identifier(url('/').'#/schema/breadcrumb/'.(!empty($entity->id) ? $entity->id : rand()));
-        
+
         $position = 1;
         $list_items = [];
         array_unshift($config['breadcrumbs'], ['name' => 'Home', 'link' => url('/').'/']);
