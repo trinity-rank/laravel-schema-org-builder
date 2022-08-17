@@ -172,23 +172,23 @@ class SchemaOrgBuilder
             ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->author(($graph->person()->referenced()->toArray()));
 
-        // Product
-        // $graph->product()
-        //     ->identifier(url('/').'#/schema/product/'.$entity['id'])
-        //     ->name(str_replace(' Review', '', $entity['name']))
-        //     ->review($review);
+        //Review
+        $graph->reviewt()
+            ->identifier(url('/').'#/schema/product/'.$entity['id'])
+            ->name(str_replace(' Review', '', $entity['name']))
+            ->review($review);
 
-        // $product_image = null;
-        // if (!empty($entity['media'])) {
-        //     $product_image = collect($entity['media'])->first(function ($value) {
-        //         return str_contains($value['collection_name'], 'logo_');
-        //     });
-        // }
-        // if (!empty($product_image)) {
-        //     $graph->product()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
-        // }
+        $product_image = null;
+        if (!empty($entity['media'])) {
+            $product_image = collect($entity['media'])->first(function ($value) {
+                return str_contains($value['collection_name'], 'logo_');
+            });
+        }
+        if (!empty($product_image)) {
+            $graph->review()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
+        }
 
-        // $graph->webPage()->product($graph->product()->referenced()->toArray());
+        $graph->webPage()->review($graph->product()->referenced()->toArray());
     }
 
     private function getBreadcrumbs(Graph $graph, $entity, $config = [])
