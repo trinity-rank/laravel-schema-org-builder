@@ -173,7 +173,7 @@ class SchemaOrgBuilder
             ->author(($graph->person()->referenced()->toArray()));
 
         //Review
-        $graph->reviewt()
+        $graph->review()
             ->identifier(url('/').'#/schema/product/'.$entity['id'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
