@@ -174,21 +174,21 @@ class SchemaOrgBuilder
 
         //Review
         $graph->review()
-            ->identifier(url('/').'#/schema/product/'.$entity['id'])
+            ->identifier(url('/').'#/schema/review/'.$entity['id'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
 
-        $product_image = null;
+        $review_image = null;
         if (!empty($entity['media'])) {
-            $product_image = collect($entity['media'])->first(function ($value) {
+            $review_image = collect($entity['media'])->first(function ($value) {
                 return str_contains($value['collection_name'], 'logo_');
             });
         }
-        if (!empty($product_image)) {
-            $graph->review()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
+        if (!empty($review_image)) {
+            $graph->review()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$review_image['id'])->url($entity->getFirstMediaUrl($review_image['collection_name'])));
         }
 
-        $graph->webPage()->review($graph->product()->referenced()->toArray());
+        $graph->webPage()->review($graph->review()->referenced()->toArray());
     }
 
     private function getBreadcrumbs(Graph $graph, $entity, $config = [])
