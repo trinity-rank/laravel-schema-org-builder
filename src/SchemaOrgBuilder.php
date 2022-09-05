@@ -147,7 +147,7 @@ class SchemaOrgBuilder
                 foreach ($decorator['data']['elements'][0]['strenghts'] as $strenght) {
                     $strenghts[] = Schema::listItem()
                         ->position($position)
-                        ->description($strenght['strenght']);
+                        ->name($strenght['strenght']);
                     $position++;
                 }
             }
@@ -156,39 +156,39 @@ class SchemaOrgBuilder
                 foreach ($decorator['data']['elements'][0]['weaknesses'] as $weakness) {
                     $weaknesses[] = Schema::listItem()
                         ->position($position)
-                        ->description($weakness['weakness']);
+                        ->name($weakness['weakness']);
                     $position++;
                 }
             }
         }
 
         $review = Schema::review()
-            ->identifier(url('/').'#/schema/review/'.$entity['id'])
+            ->identifier(url('/') . '#/schema/review/' . $entity['id'])
             ->name($entity['name'])
             ->headline($entity['title'])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
-            ->reviewBody($entity['short_description'])
             ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
             ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->author(($graph->person()->referenced()->toArray()));
 
-        //Review
-        $graph->review()
-            ->identifier(url('/').'#/schema/review/'.$entity['id'])
+        // Product
+        $graph->product()
+            ->identifier(url('/') . '#/schema/product/' . $entity['id'])
+            ->description($entity['short_description'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
 
-        $review_image = null;
+        $product_image = null;
         if (!empty($entity['media'])) {
-            $review_image = collect($entity['media'])->first(function ($value) {
+            $product_image = collect($entity['media'])->first(function ($value) {
                 return str_contains($value['collection_name'], 'logo_');
             });
         }
-        if (!empty($review_image)) {
-            $graph->review()->image(Schema::imageObject()->identifier(url('/').'#/schema/image/'.$review_image['id'])->url($entity->getFirstMediaUrl($review_image['collection_name'])));
+        if (!empty($product_image)) {
+            $graph->product()->image(Schema::imageObject()->identifier(url('/') . '#/schema/image/' . $product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
         }
 
-        $graph->webPage()->review($graph->review()->referenced()->toArray());
+        $graph->webPage()->product($graph->product()->referenced()->toArray());
     }
 
     private function getBreadcrumbs(Graph $graph, $entity, $config = [])
