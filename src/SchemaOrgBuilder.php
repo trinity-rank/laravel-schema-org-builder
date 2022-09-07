@@ -174,6 +174,7 @@ class SchemaOrgBuilder
         // Product
         $graph->product()
             ->identifier(url('/') . '#/schema/product/' . $entity['id'])
+            ->brand(Schema::brand()->name($entity['title']))
             ->description($entity['short_description'])
             ->name(str_replace(' Review', '', $entity['name']))
             ->review($review);
