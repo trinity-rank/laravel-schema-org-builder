@@ -13,7 +13,7 @@ class SchemaOrgBuilder
         $graph = new Graph();
 
         foreach ($node_properties as $property) {
-            $this->{'get'.$property}($graph, $entity, $config);
+            $this->{'get' . $property}($graph, $entity, $config);
         }
 
         return $graph->toScript();
@@ -21,9 +21,9 @@ class SchemaOrgBuilder
 
     private function getOrganization(Graph $graph, $entity, $config = [])
     {
-        $logo = Schema::imageObject()->identifier(url('/').'#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
+        $logo = Schema::imageObject()->identifier(url('/') . '#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
-            ->identifier(url('/').'#/schema/organization/1')
+            ->identifier(url('/') . '#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
             ->logo($logo)
             ->foundingDate((new DateTime(env('FOUNDING_DATE', '01.01.2020')))->format('Y-m-d'))
@@ -39,7 +39,7 @@ class SchemaOrgBuilder
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
         $graph->webSite()
-            ->identifier(url('/').'#/schema/website/1')
+            ->identifier(url('/') . '#/schema/website/1')
             ->copyrightHolder($graph->organization()->referenced()->toArray())
             ->description(config('main.seo.home.meta_description'))
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -62,7 +62,7 @@ class SchemaOrgBuilder
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
             ->potentialAction(Schema::readAction()->target(url()->current()))
-            ->potentialAction(Schema::searchAction()->target(url('/').'view-all/?q={search_term_string}')->setProperty('query-input', 'required search_term_string'));
+            ->potentialAction(Schema::searchAction()->target(url('/') . 'view-all/?q={search_term_string}')->setProperty('query-input', 'required search_term_string'));
 
         if (!empty($entity['media'][0]['collection_name'])) {
             $graph->webPage()->primaryImageOfPage($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
@@ -93,7 +93,7 @@ class SchemaOrgBuilder
         }
 
         $graph->{$type}()
-            ->identifier($graph->webPage()['url'].'#/schema/article/'.$entity['id'])
+            ->identifier($graph->webPage()['url'] . '#/schema/article/' . $entity['id'])
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -110,7 +110,7 @@ class SchemaOrgBuilder
     {
         $this->getImageObject($graph, $entity, $config);
         $graph->person()
-            ->identifier(url('/').'#/schema/person/'.$entity['id'])
+            ->identifier(url('/') . '#/schema/person/' . $entity['id'])
             ->name($entity['name']);
 
         if (!empty($entity['media'][0]['collection_name'])) {
@@ -198,11 +198,11 @@ class SchemaOrgBuilder
             return;
         }
         $graph->breadcrumbList()
-            ->identifier(url('/').'#/schema/breadcrumb/'.(!empty($entity->id) ? $entity->id : rand()));
+            ->identifier(url('/') . '#/schema/breadcrumb/' . (!empty($entity->id) ? $entity->id : rand()));
 
         $position = 1;
         $list_items = [];
-        array_unshift($config['breadcrumbs'], ['name' => 'Home', 'link' => url('/').'/']);
+        array_unshift($config['breadcrumbs'], ['name' => 'Home', 'link' => url('/') . '/']);
         $counter = count($config['breadcrumbs']);
         foreach ($config['breadcrumbs'] as $breadcrumb) {
             $item = Schema::listItem()
@@ -240,7 +240,7 @@ class SchemaOrgBuilder
         }
 
         $graph->fAQPage()
-            ->identifier(url()->current().'#/schema/faqpage/'.$entity->id)
+            ->identifier(url()->current() . '#/schema/faqpage/' . $entity->id)
             ->isPartOf($graph->webPage()->referenced()->toArray())
             ->name($faqs['title'] ?: 'FAQ')
             ->mainEntity(
@@ -264,7 +264,7 @@ class SchemaOrgBuilder
         $media['url'] = $entity->getFirstMediaUrl($entity['media'][0]['collection_name']);
 
         $graph->imageObject($media['collection_name'])
-            ->identifier(url('/').'#/schema/image/'.$media['id'])
+            ->identifier(url('/') . '#/schema/image/' . $media['id'])
             ->url($media['url'])
             ->contentUrl($media['url']);
 
@@ -308,7 +308,8 @@ class SchemaOrgBuilder
                     $list_item->image($element['image']);
                 }
                 if (isset($element['cta_url'])) {
-                    $list_item->url($element['cta_url']);
+                    $url = str_contains($element['cta_url'], 'fortunly.com') ?? 'https://fortunly.com/' . $element['cta_url'];
+                    $list_item->url($url);
                 }
                 $list_items[] = $list_item;
                 $position++;
