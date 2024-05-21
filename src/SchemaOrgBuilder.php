@@ -21,9 +21,9 @@ class SchemaOrgBuilder
 
     private function getOrganization(Graph $graph, $entity, $config = [])
     {
-        $logo = Schema::imageObject()->identifier(url('/') . '#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
+        // $logo = Schema::imageObject()->identifier(url('/') . '#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
-            ->identifier(url('/') . '#/schema/organization/1')
+            // ->identifier(url('/') . '#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
             ->logo($logo)
             ->foundingDate((new DateTime(env('FOUNDING_DATE', '01.01.2020')))->format('Y-m-d'))
@@ -39,7 +39,7 @@ class SchemaOrgBuilder
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
         $graph->webSite()
-            ->identifier(url('/') . '#/schema/website/1')
+            // ->identifier(url('/') . '#/schema/website/1')
             ->copyrightHolder($graph->organization()->referenced()->toArray())
             ->description(config('main.seo.home.meta_description'))
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -60,9 +60,7 @@ class SchemaOrgBuilder
             ->name($config['seo']->meta_title)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->url(url()->current())
-            ->isPartOf($graph->webSite()->referenced()->toArray())
-            ->potentialAction(Schema::readAction()->target(url()->current()))
-            ->potentialAction(Schema::searchAction()->target(url('/') . 'view-all/?q={search_term_string}')->setProperty('query-input', 'required search_term_string'));
+            ->isPartOf($graph->webSite()->referenced()->toArray());
 
         if (!empty($entity['media'][0]['collection_name'])) {
             $graph->webPage()->primaryImageOfPage($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
@@ -93,7 +91,7 @@ class SchemaOrgBuilder
         }
 
         $graph->{$type}()
-            ->identifier($graph->webPage()['url'] . '#/schema/article/' . $entity['id'])
+            // ->identifier($graph->webPage()['url'] . '#/schema/article/' . $entity['id'])
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -110,7 +108,7 @@ class SchemaOrgBuilder
     {
         $this->getImageObject($graph, $entity, $config);
         $graph->person()
-            ->identifier(url('/') . '#/schema/person/' . $entity['id'])
+            // ->identifier(url('/') . '#/schema/person/' . $entity['id'])
             ->name($entity['name']);
 
         if (!empty($entity['media'][0]['collection_name'])) {
@@ -163,7 +161,7 @@ class SchemaOrgBuilder
         }
 
         $review = Schema::review()
-            ->identifier(url('/') . '#/schema/review/' . $entity['id'])
+            // ->identifier(url('/') . '#/schema/review/' . $entity['id'])
             ->name($entity['name'])
             ->headline($entity['title'])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
@@ -173,7 +171,7 @@ class SchemaOrgBuilder
 
         // Product
         $graph->product()
-            ->identifier(url('/') . '#/schema/product/' . $entity['id'])
+            // ->identifier(url('/') . '#/schema/product/' . $entity['id'])
             ->brand(Schema::brand()->name($entity['title']))
             ->description($entity['short_description'])
             ->name(str_replace(' Review', '', $entity['name']))
@@ -185,9 +183,9 @@ class SchemaOrgBuilder
                 return str_contains($value['collection_name'], 'logo_');
             });
         }
-        if (!empty($product_image)) {
-            $graph->product()->image(Schema::imageObject()->identifier(url('/') . '#/schema/image/' . $product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
-        }
+        // if (!empty($product_image)) {
+        //     $graph->product()->image(Schema::imageObject()->identifier(url('/') . '#/schema/image/' . $product_image['id'])->url($entity->getFirstMediaUrl($product_image['collection_name'])));
+        // }
 
         $graph->webPage()->product($graph->product()->referenced()->toArray());
     }
@@ -197,8 +195,8 @@ class SchemaOrgBuilder
         if (!array_key_exists('breadcrumbs', $config)) {
             return;
         }
-        $graph->breadcrumbList()
-            ->identifier(url('/') . '#/schema/breadcrumb/' . (!empty($entity->id) ? $entity->id : rand()));
+        // $graph->breadcrumbList()
+        //     ->identifier(url('/') . '#/schema/breadcrumb/' . (!empty($entity->id) ? $entity->id : rand()));
 
         $position = 1;
         $list_items = [];
@@ -240,7 +238,7 @@ class SchemaOrgBuilder
         }
 
         $graph->fAQPage()
-            ->identifier(url()->current() . '#/schema/faqpage/' . $entity->id)
+            // ->identifier(url()->current() . '#/schema/faqpage/' . $entity->id)
             ->isPartOf($graph->webPage()->referenced()->toArray())
             ->name($faqs['title'] ?: 'FAQ')
             ->mainEntity(
@@ -264,7 +262,7 @@ class SchemaOrgBuilder
         $media['url'] = $entity->getFirstMediaUrl($entity['media'][0]['collection_name']);
 
         $graph->imageObject($media['collection_name'])
-            ->identifier(url('/') . '#/schema/image/' . $media['id'])
+            // ->identifier(url('/') . '#/schema/image/' . $media['id'])
             ->url($media['url'])
             ->contentUrl($media['url']);
 
@@ -277,7 +275,7 @@ class SchemaOrgBuilder
     private function getCollectionPage(Graph $graph, $entity, $config = [])
     {
         $graph->collectionPage()
-            ->identifier(url()->current())
+            // ->identifier(url()->current())
             ->about($graph->organization()->referenced()->toArray())
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
