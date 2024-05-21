@@ -51,6 +51,8 @@ class SchemaOrgBuilder
     private function getWebPage(Graph $graph, $entity, $config = [])
     {
         $this->getImageObject($graph, $entity, $config);
+        $this->getBreadcrumbs($graph, $entity, $config);
+        $this->getFAQPage($graph, $entity, $config);
         $graph->webPage()
             ->identifier(url()->current())
             ->about($graph->organization()->referenced()->toArray())
@@ -78,9 +80,6 @@ class SchemaOrgBuilder
                 $graph->webPage()->keywords($config['seo']->meta_keywords);
             }
         }
-
-        $this->getBreadcrumbs($graph, $entity, $config);
-        $this->getFAQPage($graph, $entity, $config);
     }
 
     private function getArticle(Graph $graph, $entity, $config = [])
