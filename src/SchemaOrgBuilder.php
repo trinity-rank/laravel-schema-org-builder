@@ -308,7 +308,11 @@ class SchemaOrgBuilder
                     $list_item->image($element['image']);
                 }
                 if (isset($element['cta_url'])) {
-                    $url = str_contains($element['cta_url'], 'fortunly.com') ?? 'https://fortunly.com/' . $element['cta_url'];
+                    if (str_contains($element['cta_url'], 'fortunly.com')) {
+                        $url = $element['cta_url'];
+                    } else {
+                        $url = 'https://fortunly.com' . $element['cta_url'];
+                    }
                     $list_item->url($url);
                 }
                 $list_items[] = $list_item;
