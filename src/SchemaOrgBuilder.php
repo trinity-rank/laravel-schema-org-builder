@@ -160,7 +160,7 @@ class SchemaOrgBuilder
                 "@type" => "Offer",
                 "url" => url('/') . $review_url
             ])
-            ->itemReveiwd([
+            ->itemReviewed([
                 "@type" => 'Product'
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
