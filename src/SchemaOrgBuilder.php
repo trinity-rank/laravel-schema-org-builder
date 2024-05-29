@@ -161,7 +161,7 @@ class SchemaOrgBuilder
                 "url" => url('/') . $review_url
             ])
             ->itemReviewed([
-                "@type" => 'Product',
+                "@type" => 'Thing',
                 "name" => $entity['name']
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
