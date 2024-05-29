@@ -23,6 +23,7 @@ class SchemaOrgBuilder
     {
         $logo = Schema::imageObject()->identifier(url('/') . '#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
+            ->identifier(url('/'))
             ->description(config('main.seo.home.meta_description'))
             ->logo($logo)
             ->foundingDate((new DateTime(env('FOUNDING_DATE', '01.01.2020')))->format('Y-m-d'))
@@ -38,6 +39,7 @@ class SchemaOrgBuilder
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
         $graph->webSite()
+            ->identifier(url('/'))
             ->description(config('main.seo.home.meta_description'))
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->name(config('schema-org-builder.general.name'))
@@ -50,6 +52,7 @@ class SchemaOrgBuilder
         $this->getBreadcrumbs($graph, $entity, $config);
         $this->getFAQPage($graph, $entity, $config);
         $graph->webPage()
+            ->identifier(url('/'))
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
             ->description($config['seo']->meta_description)
@@ -79,6 +82,7 @@ class SchemaOrgBuilder
         }
 
         $graph->{$type}()
+            ->identifier(url('/'))
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -147,6 +151,7 @@ class SchemaOrgBuilder
         }
 
         $graph->review()
+            ->identifier(url('/'))
             ->name($entity['name'])
             ->headline($entity['title'])
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
@@ -154,6 +159,9 @@ class SchemaOrgBuilder
             ->offers([
                 "@type" => "Offer",
                 "url" => url('/') . $review_url
+            ])
+            ->itemReveiwd([
+                "@type" => 'Product'
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
             ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
@@ -216,6 +224,7 @@ class SchemaOrgBuilder
         }
 
         $graph->fAQPage()
+            ->identifier(url('/'))
             ->isPartOf(url('/') . $entity['slug'])
             ->name($faqs['title'] ?: 'FAQ')
             ->mainEntity(
@@ -251,6 +260,7 @@ class SchemaOrgBuilder
     private function getCollectionPage(Graph $graph, $entity, $config = [])
     {
         $graph->collectionPage()
+            ->identifier(url('/'))
             ->about($graph->organization()->referenced()->toArray())
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
