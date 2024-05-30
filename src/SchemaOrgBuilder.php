@@ -39,16 +39,19 @@ class SchemaOrgBuilder
 
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
+        $lang = $entity['multilang_language'] ?? 'us';
         $graph->webSite()
             // ->identifier(url('/') . '#/schema/website/1')
             ->description(config('main.seo.home.meta_description'))
-            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->name(config('schema-org-builder.general.name'))
             ->url(url('/'));
     }
 
     private function getWebPage(Graph $graph, $entity, $config = [])
     {
+        $lang = $entity['multilang_language'] ?? 'us';
+
         $this->getImageObject($graph, $entity, $config);
         $this->getBreadcrumbs($graph, $entity, $config);
         $this->getFAQPage($graph, $entity, $config);
@@ -58,7 +61,7 @@ class SchemaOrgBuilder
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
-            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->url(url()->current())
             ->isPartOf(url('/'));
 
@@ -77,6 +80,7 @@ class SchemaOrgBuilder
 
     private function getArticle(Graph $graph, $entity, $config = [])
     {
+        $lang = $entity['multilang_language'];
         $type = 'article';
         if ((class_exists('\App\Articles\Types\News')) && ($entity instanceof \App\Articles\Types\News)) {
             $type = 'newsArticle';
@@ -86,7 +90,7 @@ class SchemaOrgBuilder
             ->identifier(url()->current() . '#/schema/article/' . $entity["id"])
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
-            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->isPartOf(url('/'))
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
@@ -119,6 +123,8 @@ class SchemaOrgBuilder
         $review_rating = null;
         $strenghts = $weaknesses = [];
         $review_url = '';
+        $lang = $entity['multilang_language'];
+
         foreach ($entity->decorators as $decorator) {
             if (!in_array($decorator['layout'], config('schema-org-builder.review.relevant_decorators'))) {
                 continue;
@@ -166,7 +172,7 @@ class SchemaOrgBuilder
             ->datePublished((new DateTime($entity["created_at"]))->format("Y-m-d"))
             ->dateModified((new DateTime($entity["updated_at"]))->format("Y-m-d"))
             ->description($entity["short_description"])
-            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->offers([
                 "@type" => "Offer",
                 "url" => url("/") . $review_url
@@ -298,12 +304,14 @@ class SchemaOrgBuilder
 
     private function getCollectionPage(Graph $graph, $entity, $config = [])
     {
+        $lang = $entity['multilang_language'];
+
         $graph->collectionPage()
             ->identifier(url()->current() . '#/page/')
             ->about($graph->organization()->referenced()->toArray())
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
-            ->inLanguage(config('schema-org-builder.general.inLanguage'))
+            ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
             ->potentialAction(Schema::readAction()->target(url()->current()));
@@ -311,6 +319,7 @@ class SchemaOrgBuilder
 
     private function getMoneyPage(Graph $graph, $entity, $config = [])
     {
+
         foreach ($entity->decorators as $decorator) {
             if (strpos($decorator['layout'], 'table-section') === false) {
                 continue;
