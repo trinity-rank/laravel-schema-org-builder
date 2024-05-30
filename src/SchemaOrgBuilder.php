@@ -11,19 +11,19 @@ class SchemaOrgBuilder
     public function getSchemaOrg($entity, $node_properties, $config = [])
     {
         $graph = new Graph();
-
         foreach ($node_properties as $property) {
             $this->{'get' . $property}($graph, $entity, $config);
         }
-
         return $graph->toScript();
     }
 
     private function getOrganization(Graph $graph, $entity, $config = [])
     {
-        $logo = Schema::imageObject()->identifier(url('/') . '#/schema/image/organization_logo')->url(asset(config('schema-org-builder.general.logo')));
+        $logo = Schema::imageObject()
+            ->identifier(url('/') . '#/schema/image/organization_logo')
+            ->url(asset(config('schema-org-builder.general.logo')));
         $graph->organization()
-            ->identifier(url('/'))
+            ->identifier(url('/') . '#/schema/organization/1')
             ->description(config('main.seo.home.meta_description'))
             ->logo($logo)
             ->foundingDate((new DateTime(env('FOUNDING_DATE', '01.01.2020')))->format('Y-m-d'))
@@ -39,7 +39,7 @@ class SchemaOrgBuilder
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
         $graph->webSite()
-            ->identifier(url('/'))
+            ->identifier(url('/') . '#/schema/website/1')
             ->description(config('main.seo.home.meta_description'))
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->name(config('schema-org-builder.general.name'))
@@ -52,7 +52,7 @@ class SchemaOrgBuilder
         $this->getBreadcrumbs($graph, $entity, $config);
         $this->getFAQPage($graph, $entity, $config);
         $graph->webPage()
-            ->identifier(url('/'))
+            ->identifier(url()->current() . '#/schema/webpage/' . $entity['id'])
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
             ->description($config['seo']->meta_description)
@@ -82,7 +82,7 @@ class SchemaOrgBuilder
         }
 
         $graph->{$type}()
-            ->identifier(url('/'))
+            ->identifier(url()->current() . '#/schema/article/' . $entity->id)
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
@@ -98,10 +98,12 @@ class SchemaOrgBuilder
     private function getPerson(Graph $graph, $entity, $config = [])
     {
         $this->getImageObject($graph, $entity, $config);
-        $graph->person()->name($entity['name']);
-        $graph->person()->url(multilang_route('author', [$entity->slug]));
-        if (!empty($entity['media'][0]['collection_name'])) {
-            $graph->person()->image($entity->getFirstMediaUrl('profile_photo'));
+        $graph->identifier(url('/') . '#/schema/person/' . $entity->id);
+        $graph->person()->name($entity["name"]);
+        $graph->identifier("Person Schema");
+        $graph->person()->url(multilang_route("author", [$entity->slug]));
+        if (!empty($entity["media"][0]["collection_name"])) {
+            $graph->person()->image($entity->getFirstMediaUrl("profile_photo"));
         }
     }
 
@@ -151,31 +153,39 @@ class SchemaOrgBuilder
         }
 
         $graph->review()
-            ->identifier(url('/'))
-            ->name($entity['name'])
-            ->headline($entity['title'])
-            ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
-            ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
+            ->identifier(url('/') . '#/schema/review/' . $entity->id)
+            ->name($entity["name"])
+            ->headline($entity["title"])
+            ->datePublished((new DateTime($entity["created_at"]))->format("Y-m-d"))
+            ->dateModified((new DateTime($entity["updated_at"]))->format("Y-m-d"))
             ->offers([
                 "@type" => "Offer",
-                "url" => url('/') . $review_url
+                "url" => url("/") . $review_url
             ])
             ->itemReviewed([
-                "@type" => 'Thing',
-                "name" => $entity['name']
+                "@type" => "Product",
+                "name" => $entity["name"],
+                "review" => [
+                    "@type" => "Review",
+                    "author" => [
+                        "@type" => "Person",
+                        "name" => $entity->user->name,
+                        "url" => multilang_route("author", [$entity->user->slug])
+                    ]
+                ]
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
             ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
             ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->author([
-                '@type' => 'Person',
-                'name' => $entity->user->name,
-                'url' => multilang_route('author', [$entity->user->slug])
+                "@type" => "Person",
+                "name" => $entity->user->name,
+                "url" => multilang_route("author", [$entity->user->slug])
             ])
             ->publisher([
                 "@type" => "Organization",
-                "name" => config('schema-org-builder.general.name'),
-                "url" => url('/')
+                "name" => config("schema-org-builder.general.name"),
+                "url" => url("/")
             ]);
     }
 
@@ -187,7 +197,7 @@ class SchemaOrgBuilder
 
         $position = 1;
         $list_items = [];
-        array_unshift($config['breadcrumbs'], ['name' => 'Home', 'link' => url('/') . '/']);
+        array_unshift($config['breadcrumbs'], ['name' => 'Home', 'link' => url('/')]);
         $counter = count($config['breadcrumbs']);
         foreach ($config['breadcrumbs'] as $breadcrumb) {
             $item = Schema::listItem()
@@ -200,6 +210,7 @@ class SchemaOrgBuilder
             $position++;
         }
         $graph->breadcrumbList()
+            ->identifier('Breadcrumbs Schema')
             ->itemListElement($list_items);
 
         if (array_key_exists('Spatie\SchemaOrg\WebPage', $graph->getNodes())) {
@@ -225,7 +236,7 @@ class SchemaOrgBuilder
         }
 
         $graph->fAQPage()
-            ->identifier(url('/'))
+            ->identifier(url()->current() . '#/schema/faqpage/' . $entity->id)
             ->isPartOf(url('/') . $entity['slug'])
             ->name($faqs['title'] ?: 'FAQ')
             ->mainEntity(
