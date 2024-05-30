@@ -180,10 +180,17 @@ class SchemaOrgBuilder
                     ],
                     "reviewRating" => ["ratingValue" => $review_rating],
                     "positiveNotes" => Schema::itemList()->itemListElement($strenghts),
-                    "negativeNotes" => Schema::itemList()->itemListElement($weaknesses)
+                    "negativeNotes" => Schema::itemList()->itemListElement($weaknesses),
+                    "offers" => [
+                        "@type" => "Offer",
+                        "url" => url("/") . $review_url
+                    ],
+                    "datePublished" => (new DateTime($entity["created_at"]))->format("Y-m-d"),
+                    "dateModified" => (new DateTime($entity["updated_at"]))->format("Y-m-d")
+
                 ]
             ])
-            // ->reviewRating(Schema::rating()->ratingValue($review_rating))
+            ->reviewRating(Schema::rating()->ratingValue($review_rating))
             // ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
             // ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->author([
