@@ -32,9 +32,9 @@ class SchemaOrgBuilder
             ->brand(config('schema-org-builder.general.name'))
             ->email(config('main.mail_address'))
             ->telephone(config('main.mail_address'))
-            ->sameAs(config('schema-org-builder.sameAs'))
+            ->sameAs(config('schema-org-builder.organization.sameAs'))
             ->slogan(config('schema-org-builder.slogan'))
-            ->url(url('/'));
+            ->url(url()->current());
     }
 
     private function getWebSite(Graph $graph, $entity, $config = [])
@@ -166,6 +166,7 @@ class SchemaOrgBuilder
             ->datePublished((new DateTime($entity["created_at"]))->format("Y-m-d"))
             ->dateModified((new DateTime($entity["updated_at"]))->format("Y-m-d"))
             ->description($entity["short_description"])
+            ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->offers([
                 "@type" => "Offer",
                 "url" => url("/") . $review_url
@@ -298,7 +299,7 @@ class SchemaOrgBuilder
     private function getCollectionPage(Graph $graph, $entity, $config = [])
     {
         $graph->collectionPage()
-            ->identifier(url('/'))
+            ->identifier(url()->current() . '#/page/')
             ->about($graph->organization()->referenced()->toArray())
             ->description($config['seo']->meta_description)
             ->name($config['seo']->meta_title)
@@ -306,8 +307,6 @@ class SchemaOrgBuilder
             ->url(url()->current())
             ->isPartOf($graph->webSite()->referenced()->toArray())
             ->potentialAction(Schema::readAction()->target(url()->current()));
-
-        $this->getBreadcrumbs($graph, $entity, $config);
     }
 
     private function getMoneyPage(Graph $graph, $entity, $config = [])
