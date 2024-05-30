@@ -164,9 +164,6 @@ class SchemaOrgBuilder
             ->headline($entity["title"])
             ->datePublished((new DateTime($entity["created_at"]))->format("Y-m-d"))
             ->dateModified((new DateTime($entity["updated_at"]))->format("Y-m-d"))
-            ->reviewRating(Schema::rating()->ratingValue($review_rating))
-            ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
-            ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->offers([
                 "@type" => "Offer",
                 "url" => url("/") . $review_url
@@ -180,12 +177,15 @@ class SchemaOrgBuilder
                         "@type" => "Person",
                         "name" => $entity->user->name,
                         "url" => multilang_route("author", [$entity->user->slug])
-                    ]
+                    ],
+                    "reviewRating" => ["ratingValue" => $review_rating],
+                    "positiveNotes" => Schema::itemList()->itemListElement($strenghts),
+                    "negativeNotes" => Schema::itemList()->itemListElement($weaknesses)
                 ]
             ])
-            ->reviewRating(Schema::rating()->ratingValue($review_rating))
-            ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
-            ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
+            // ->reviewRating(Schema::rating()->ratingValue($review_rating))
+            // ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
+            // ->negativeNotes(Schema::itemList()->itemListElement($weaknesses))
             ->author([
                 "@type" => "Person",
                 "name" => $entity->user->name,
@@ -214,6 +214,8 @@ class SchemaOrgBuilder
                 ->name($breadcrumb['name']);
             if ($counter != $position && isset($breadcrumb['link'])) {
                 $item->item($breadcrumb['link']);
+            } else {
+                $item->item(url()->current());
             }
             $list_items[] = $item;
             $position++;
@@ -246,7 +248,7 @@ class SchemaOrgBuilder
 
         $graph->fAQPage()
             ->identifier(url()->current() . '#/schema/faqpage/' . $entity->id)
-            ->isPartOf(url('/') . $entity['slug'])
+            ->isPartOf(url()->current())
             ->name($faqs['title'] ?: 'FAQ')
             ->mainEntity(
                 array_map(function ($faq) {
