@@ -32,7 +32,6 @@ class SchemaOrgBuilder
             ->brand(config('schema-org-builder.general.name'))
             ->email(config('main.mail_address'))
             ->telephone(config('main.mail_address'))
-            ->address(config('main.mail_address'))
             ->sameAs(config('schema-org-builder.sameAs'))
             ->slogan(config('schema-org-builder.slogan'))
             ->url(url('/'));
