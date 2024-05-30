@@ -100,7 +100,6 @@ class SchemaOrgBuilder
         $this->getImageObject($graph, $entity, $config);
         $graph->identifier(url('/') . '#/schema/person/' . $entity->id);
         $graph->person()->name($entity["name"]);
-        $graph->identifier("Person Schema");
         $graph->person()->url(multilang_route("author", [$entity->slug]));
         if (!empty($entity["media"][0]["collection_name"])) {
             $graph->person()->image($entity->getFirstMediaUrl("profile_photo"));
@@ -210,7 +209,7 @@ class SchemaOrgBuilder
             $position++;
         }
         $graph->breadcrumbList()
-            ->identifier('Breadcrumbs Schema')
+            ->identifier(url()->current() . '#/schema/breadcrumbs/' . $entity["id"])
             ->itemListElement($list_items);
 
         if (array_key_exists('Spatie\SchemaOrg\WebPage', $graph->getNodes())) {
