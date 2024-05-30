@@ -39,7 +39,7 @@ class SchemaOrgBuilder
     private function getWebSite(Graph $graph, $entity, $config = [])
     {
         $graph->webSite()
-            ->identifier(url('/') . '#/schema/website/1')
+            // ->identifier(url('/') . '#/schema/website/1')
             ->description(config('main.seo.home.meta_description'))
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
             ->name(config('schema-org-builder.general.name'))
@@ -82,17 +82,24 @@ class SchemaOrgBuilder
         }
 
         $graph->{$type}()
-            ->identifier(url()->current() . '#/schema/article/' . $entity->id)
+            ->identifier(url()->current() . '#/schema/article/' . $entity["id"])
             ->headline($entity['title'])
             ->description($config['seo']->meta_description)
             ->inLanguage(config('schema-org-builder.general.inLanguage'))
-            ->isPartOf($graph->webPage()->referenced()->toArray())
-            ->mainEntityOfPage($graph->webPage()->referenced()->toArray())
+            ->isPartOf(url('/'))
             ->datePublished((new DateTime($entity['created_at']))->format('Y-m-d'))
             ->dateModified((new DateTime($entity['updated_at']))->format('Y-m-d'))
-            ->publisher($graph->organization()->referenced()->toArray())
-            ->author(($graph->person()->referenced()->toArray()))
-            ->image($graph->imageObject($entity['media'][0]['collection_name'])->referenced()->toArray());
+            ->publisher([
+                "@type" => "Organization",
+                "name" => config("schema-org-builder.general.name"),
+                "url" => url("/")
+            ])
+            ->author([
+                "@type" => "Person",
+                "name" => $entity->user->name,
+                "url" => multilang_route("author", [$entity->user->slug])
+            ])
+            ->image($entity->getFirstMediaUrl('feature'));
     }
 
     private function getPerson(Graph $graph, $entity, $config = [])
