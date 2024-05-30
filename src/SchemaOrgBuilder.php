@@ -31,6 +31,8 @@ class SchemaOrgBuilder
             ->name(config('schema-org-builder.general.name'))
             ->brand(config('schema-org-builder.general.name'))
             ->email(config('main.mail_address'))
+            ->telephone(config('main.mail_address'))
+            ->address(config('main.mail_address'))
             ->sameAs(config('schema-org-builder.sameAs'))
             ->slogan(config('schema-org-builder.slogan'))
             ->url(url('/'));
@@ -186,9 +188,14 @@ class SchemaOrgBuilder
                         "url" => url("/") . $review_url
                     ],
                     "datePublished" => (new DateTime($entity["created_at"]))->format("Y-m-d"),
-                    "dateModified" => (new DateTime($entity["updated_at"]))->format("Y-m-d")
-
-                ]
+                    "dateModified" => (new DateTime($entity["updated_at"]))->format("Y-m-d"),
+                    "url" => multilang_route('reviews.resolve', [$entity->slug])
+                ],
+                "offers" => [
+                    "@type" => "Offer",
+                    "url" => url("/") . $review_url
+                ],
+                "url" => multilang_route('reviews.resolve', [$entity->slug])
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
             // ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
@@ -202,7 +209,8 @@ class SchemaOrgBuilder
                 "@type" => "Organization",
                 "name" => config("schema-org-builder.general.name"),
                 "url" => url("/")
-            ]);
+            ])
+            ->url(multilang_route('reviews.resolve', [$entity->slug]));
     }
 
     private function getBreadcrumbs(Graph $graph, $entity, $config = [])
