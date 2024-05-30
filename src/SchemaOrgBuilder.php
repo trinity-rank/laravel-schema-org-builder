@@ -166,6 +166,7 @@ class SchemaOrgBuilder
             ->headline($entity["title"])
             ->datePublished((new DateTime($entity["created_at"]))->format("Y-m-d"))
             ->dateModified((new DateTime($entity["updated_at"]))->format("Y-m-d"))
+            ->description($entity["short_description"])
             ->offers([
                 "@type" => "Offer",
                 "url" => url("/") . $review_url
@@ -173,6 +174,7 @@ class SchemaOrgBuilder
             ->itemReviewed([
                 "@type" => "Product",
                 "name" => $entity["name"],
+                "description" => $entity["short_description"],
                 "review" => [
                     "@type" => "Review",
                     "author" => [
@@ -189,13 +191,11 @@ class SchemaOrgBuilder
                     ],
                     "datePublished" => (new DateTime($entity["created_at"]))->format("Y-m-d"),
                     "dateModified" => (new DateTime($entity["updated_at"]))->format("Y-m-d"),
-                    "url" => multilang_route('reviews.resolve', [$entity->slug])
+                    "url" => multilang_route('reviews.resolve', [$entity->slug]),
+                    "image" => $entity->getFirstMediaUrl('feature')
                 ],
-                "offers" => [
-                    "@type" => "Offer",
-                    "url" => url("/") . $review_url
-                ],
-                "url" => multilang_route('reviews.resolve', [$entity->slug])
+                "url" => multilang_route('reviews.resolve', [$entity->slug]),
+                "image" => $entity->getFirstMediaUrl('feature')
             ])
             ->reviewRating(Schema::rating()->ratingValue($review_rating))
             // ->positiveNotes(Schema::itemList()->itemListElement($strenghts))
@@ -210,6 +210,7 @@ class SchemaOrgBuilder
                 "name" => config("schema-org-builder.general.name"),
                 "url" => url("/")
             ])
+            ->image($entity->getFirstMediaUrl('feature'))
             ->url(multilang_route('reviews.resolve', [$entity->slug]));
     }
 
