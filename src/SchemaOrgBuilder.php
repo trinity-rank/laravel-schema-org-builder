@@ -80,7 +80,7 @@ class SchemaOrgBuilder
 
     private function getArticle(Graph $graph, $entity, $config = [])
     {
-        $lang = $entity['multilang_language'];
+        $lang = $entity['multilang_language'] ?? 'us';
         $type = 'article';
         if ((class_exists('\App\Articles\Types\News')) && ($entity instanceof \App\Articles\Types\News)) {
             $type = 'newsArticle';
@@ -123,7 +123,7 @@ class SchemaOrgBuilder
         $review_rating = null;
         $strenghts = $weaknesses = [];
         $review_url = '';
-        $lang = $entity['multilang_language'];
+        $lang = $entity['multilang_language'] ?? 'us';
 
         foreach ($entity->decorators as $decorator) {
             if (!in_array($decorator['layout'], config('schema-org-builder.review.relevant_decorators'))) {
@@ -175,7 +175,8 @@ class SchemaOrgBuilder
             ->inLanguage(config('schema-org-builder.general.inLanguage')[$lang])
             ->offers([
                 "@type" => "Offer",
-                "url" => url("/") . $review_url
+                "url" => url("/") . $review_url,
+                "image" => $entity->getFirstMediaUrl('feature')
             ])
             ->itemReviewed([
                 "@type" => "Product",
@@ -304,7 +305,7 @@ class SchemaOrgBuilder
 
     private function getCollectionPage(Graph $graph, $entity, $config = [])
     {
-        $lang = $entity['multilang_language'];
+        $lang = $entity['multilang_language'] ?? 'us';
 
         $graph->collectionPage()
             ->identifier(url()->current() . '#/page/')
